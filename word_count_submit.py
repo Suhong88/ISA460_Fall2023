@@ -5,11 +5,12 @@ import pyspark.sql.functions as F
 account='sli'
 
 # define a root path to access the data in the DataAnalysisWithPythonAndPySpark
-root_path='/net/clusterhn/home/'+account+'/isa540/Data/'
+root_path='/net/clusterhn/home/'+account+'/isa460/Data/'
 
-spark = SparkSession.builder.appName(
-    "Counting word occurences from a book."
-).getOrCreate()
+spark = (SparkSession.builder.appName(
+    "Counting word occurences from a book.")
+     .config("spark.port.maxRetries", "100")
+     .getOrCreate())
 
 spark.sparkContext.setLogLevel("WARN")
 
@@ -26,4 +27,4 @@ results = (
 )
 
 results.orderBy("count", ascending=False).show(10)
-results.coalesce(1).write.csv("results_single_partition.csv")
+results.coalesce(1).write.mode('overwrite').csv("results_single_partition.csv")
